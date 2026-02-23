@@ -1,30 +1,35 @@
-import dotenv from "dotenv/config"
-import { GoogleGenAI } from "@google/genai"
-import express from "express"
+import dotenv from "dotenv/config";
+import { GoogleGenAI } from "@google/genai";
+import { readFileSync } from "fs";
+import express from "express";
 
 const app = express();
 
 const googleClient = new GoogleGenAI({
-    apiKey: process.env.GEMINI_KEY
-})
+  apiKey: process.env.GEMINI_KEY,
+});
 
-app.get("/" , async (req, res)=>{
-       const response = await googleClient.models.generateContentStream({
-        model: "gemini-2.5-flash",
-        contents: "Tell me about AI",
-    })
+const base64Img = readFileSync("framework.webp", {
+  encoding: "base64",
+});
 
-    for await (const chunks of response){
-        let text = chunks.text;
-        res.write(text);
-    }
-})
+const contents = [
+  {
+    inlineData: {
+      mimeType: "image/webp",
+      data: base64Img,
+    },
+  },
+  {
+    text: "Caption this image",
+  },
+];
+
+const response = await googleClient.models.generateContent({
+  model: "gemini-3-flash-preview",
+  contents: contents,
+});
+
+console.log(response.text);
 
 app.listen(3000);
-
- 
-
-
-
-
-

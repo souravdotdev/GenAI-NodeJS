@@ -1,18 +1,30 @@
 import dotenv from "dotenv/config"
 import { GoogleGenAI } from "@google/genai"
+import express from "express"
+
+const app = express();
 
 const googleClient = new GoogleGenAI({
     apiKey: process.env.GEMINI_KEY
 })
 
-async function getResponse(question){
-    const response = await googleClient.models.generateContent({
+app.get("/" , async (req, res)=>{
+       const response = await googleClient.models.generateContentStream({
         model: "gemini-2.5-flash",
-        contents: question,
+        contents: "Tell me about AI",
     })
 
-    console.log(response.text)
-}
+    for await (const chunks of response){
+        let text = chunks.text;
+        res.write(text);
+    }
+})
 
-getResponse("Tell me about the place called Ottapalam in Kerala");
+app.listen(3000);
+
+ 
+
+
+
+
 

@@ -9,27 +9,14 @@ const googleClient = new GoogleGenAI({
   apiKey: process.env.GEMINI_KEY,
 });
 
-const base64Img = readFileSync("framework.webp", {
-  encoding: "base64",
-});
 
-const contents = [
-  {
-    inlineData: {
-      mimeType: "image/webp",
-      data: base64Img,
-    },
-  },
-  {
-    text: "Caption this image",
-  },
-];
+async function generateImage(){
+    const response = await googleClient.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: "Create an image of a lion standing in antartica"
+    })
 
-const response = await googleClient.models.generateContent({
-  model: "gemini-3-flash-preview",
-  contents: contents,
-});
+    console.log(response.candidates[0].content);
+}
 
-console.log(response.text);
-
-app.listen(3000);
+generateImage();

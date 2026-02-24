@@ -13,7 +13,7 @@ async function readJsonFile(){
     createJsonFile(responseData, "embedding.json");
 }
 
-async function createDimensions(data){
+export async function createDimensions(data){
     const googleClient = new GoogleGenAI({
         apiKey: process.env.GEMINI_KEY
     })
@@ -31,4 +31,4 @@ function createJsonFile(data, file){
     writeFileSync(file, fileData);
 }
 
-readJsonFile();
+// readJsonFile();
